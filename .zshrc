@@ -118,6 +118,9 @@ alias sshconfig="cat ~/.ssh/config"
 alias appstore="mas"
 alias gentempmail="mailsy"
 
+source functions
+source aliases
+
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
