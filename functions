@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+genpass(){
+pComplexity=$1
+pLength=$2
+charSet=""
+
+if [[ "${1}" == "help" ]]; then
+cat << EOF
+usage: genpass [PASSWORD COMPLEXITY] [PASSWORD LENGTH]
+
+*** PASSWORD COMPLEXITY BASED ON VALUE ***
+1: A-Z a-z
+2: A-Z a-z 0-9
+3. A-Z a-z 0-9 + Special Characters
+
+*** DEFAULTS ***
+PASSWORD COMPLEXITY: 3
+PASSWORD LENGTH 10
+
+EXAMPLE: genpass 1 10 (To generate a 10 char password with A-Z a-z)
+
+EOF
+
+fi
+
+if [[ -z "$pLength" ]];then
+ pLength=10
+fi
+
+if [[ $pComplexity == 1 ]]; then
+ charSet="A-Za-z"
+elif [[ $pComplexity == 2 ]]; then
+ charSet="A-Za-z0-9"
+elif [[ $pComplexity == 3 ]]; then
+ charSet='A-Za-z0-9!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
+else
+ charSet='A-Za-z0-9!"#$%&()*+,-./:;<=>?@[\]^_`{|}~'
+fi
+tr -dc $charSet </dev/urandom | head -c $pLength;echo ''
+}

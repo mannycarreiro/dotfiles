@@ -1,0 +1,7 @@
+# SYSTEMD ALIAS
+alias sctl="systemctl"
+alias jctl="journalctl"
+
+# LS ALIAS
+alias ll="ls -ltr"
+alias f="find"
