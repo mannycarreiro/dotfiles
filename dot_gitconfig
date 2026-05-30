@@ -1,0 +1,10 @@
+[user]
+	name = Manny Carreiro
+	email = carreiro.emanuel@gmail.com
+	signingkey = 23B66188964A28DAC854BCF4D517C744B3C5DA7F
+[commit]
+	gpgSign = true
+[tag]
+	gpgSign = true
+[gpg]
+	program = /opt/homebrew/bin/gpg
