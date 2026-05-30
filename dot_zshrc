@@ -50,6 +50,9 @@ zinit snippet OMZP::command-not-found
 zinit snippet OMZP::sudo
 zinit snippet OMZP::docker
 zinit snippet OMZP::docker-compose
+zinit snippet OMZP::chezmoi
+zinit snippet OMZP::ansible
+
 
 
 
