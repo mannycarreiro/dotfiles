@@ -125,3 +125,24 @@ alias aliashelp="open /Users/manny/zshconfig.d/devops_cheat-sheet.html"
 # -- Open SSH Session Manager Page ---
 alias sshmanager="open http://localhost:8822"
 
+fssh() {
+  local host config_files
+  #config_files=($(/Users/manny/.ssh/config.d/* ~/.ssh/config))
+
+  host=$(awk '
+    BEGIN { FS=" +" }
+    /^Host [^*]/ {
+      for (i=2; i<=NF; i++)
+        print $i
+    }
+  ' /Users/manny/.ssh/config.d/* ~/.ssh/config 2>/dev/null | \
+    sort -u | \
+    fzf --multi \
+        --preview 'grep -A 8 "^Host {}" /Users/manny/.ssh/config.d/* ~/.ssh/config 2>/dev/null' \
+        --preview-window=right:40%)
+
+  [ -n "$host" ] && ssh $host
+}
+# Ctrl+s for SSH fuzzy search
+stty -ixon  # Disable flow control
+bindkey -s '^s' 'fssh\n'
