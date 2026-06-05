@@ -91,6 +91,7 @@ eval "$(zoxide init --cmd cd zsh)"
 # ALIASES
 # ===========================
 alias ls='ls --color'
+alias ll='ls -ltra --color'
 alias vim='nvim'
 alias e='vim'
 alias vi='vim'
