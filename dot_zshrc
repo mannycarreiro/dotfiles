@@ -107,3 +107,21 @@ eval "$(zoxide init --cmd cd zsh)"
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# ==== K8S ====
+export KUBECONFIG=/Users/manny/develop/talos_k8s/sousaca-k8s/sousaca-k8s
+
+# ==== BITWARDEN ====
+#export SSH_AUTH_SOCK=/Users/manny/.bitwarden-ssh-agent.sock
+
+# ==== SOURCE ALL sshconfig.d ====
+export DEVOPS_SILENT=1
+for f in "$HOME/zshconfig.d/"*.sh; do
+    [[ -f "$f" ]] && source "$f"
+done
+
+# -- Open cheat-sheet HTML file ---
+alias aliashelp="open /Users/manny/zshconfig.d/devops_cheat-sheet.html"
+
+# -- Open SSH Session Manager Page ---
+alias sshmanager="open http://localhost:8822"
+
