@@ -109,6 +109,16 @@ eval "$(zoxide init --cmd cd zsh)"
 # ==== K8S ====
 export KUBECONFIG=/Users/manny/develop/talos_k8s/sousaca-k8s/sousaca-k8s
 
+kns() {
+  local ns
+  ns=$(kubectl get namespaces --no-headers -o custom-columns=':metadata.name' 2>/dev/null | \
+    fzf \
+      --preview 'kubectl get pods -n {} --no-headers 2>/dev/null | head -30 || echo "No pods"' \
+      --preview-window=right:60% \
+      --prompt='namespace> ')
+  [ -n "$ns" ] && kubectl config set-context --current --namespace="$ns" && echo "Switched to namespace: $ns"
+}
+
 # ==== BITWARDEN ====
 #export SSH_AUTH_SOCK=/Users/manny/.bitwarden-ssh-agent.sock
 
@@ -128,8 +138,25 @@ alias sshmanager="open http://localhost:8822"
 export HOMEBREW_REQUIRE_TAP_TRUST=1
 
 fssh() {
-  local host config_files
-  #config_files=($(/Users/manny/.ssh/config.d/* ~/.ssh/config))
+  local host tmpscript
+
+  # Write preview script to temp file to avoid quoting issues with fzf -> sh -> awk chain
+  tmpscript=$(mktemp /tmp/fssh_preview.XXXXXX) || return 1
+  cat > "$tmpscript" << 'PREVIEW_EOF'
+#!/bin/sh
+h="$1"; shift
+awk -v h="$h" '
+  /^[[:space:]]*#/ { if (f) print; else c = c $0 "\n"; next }
+  /^[[:space:]]*$/ { if (f) print; else c = ""; next }
+  /^Host / {
+    if ($2 == h) { f=1; printf "%s", c; print }
+    else { f=0 }
+    c = ""; next
+  }
+  f { print }
+' "$@"
+PREVIEW_EOF
+  chmod +x "$tmpscript"
 
   host=$(awk '
     BEGIN { FS=" +" }
@@ -139,11 +166,12 @@ fssh() {
     }
   ' /Users/manny/.ssh/config.d/* ~/.ssh/config 2>/dev/null | \
     sort -u | \
-    fzf --multi \
-        --preview 'grep -A 8 "^Host {}" /Users/manny/.ssh/config.d/* ~/.ssh/config 2>/dev/null' \
-        --preview-window=right:40%)
+    fzf \
+      --preview "$tmpscript {} /Users/manny/.ssh/config.d/* ~/.ssh/config" \
+      --preview-window=right:50%)
 
-  [ -n "$host" ] && ssh $host
+  rm -f "$tmpscript"
+  [ -n "$host" ] && ssh "$host"
 }
 # Ctrl+s for SSH fuzzy search
 bindkey -s '^s' 'fssh\n'
