@@ -1,11 +1,11 @@
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # =====================
 #        zinit
@@ -84,7 +84,6 @@ setopt hist_find_no_dups
 # SHELL INTEGRATIONS
 # ===========================
 eval "$(fzf --zsh)"
-eval "$(zoxide init --cmd cd zsh)"
 
 
 # ===========================
@@ -147,6 +146,9 @@ fssh() {
   [ -n "$host" ] && ssh $host
 }
 # Ctrl+s for SSH fuzzy search
-stty -ixon  # Disable flow control
 bindkey -s '^s' 'fssh\n'
+
+# stty -ixon must run after _p9k_precmd (p10k resets terminal state in its precmd hook)
+_stty_ixon_precmd() { stty -ixon 2>/dev/null }
+precmd_functions+=(_stty_ixon_precmd)
 
